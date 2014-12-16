@@ -1,0 +1,88 @@
+<html>
+
+<body>
+    <p>
+        Seeking a HTML5 video near its end in Internet Explorer might crash IE.
+    </p>
+
+    <p>
+        The used video was encoded using ffmpeg with the following options:
+    </p>
+
+    <pre>-c:v libx264 -profile:v high -level 4.1 -strict -2 -pix_fmt yuv420p -crf 12 -an -sn -subq 9" OPT_KEY="-g 24 -keyint_min 12
+    </pre>
+
+    <p>
+        Related bug reports
+    </p>
+
+    <ul>
+        <li>
+            <a href="https://connect.microsoft.com/IE/feedback/details/777086/seeking-to-end-of-html-5-video-under-win-7-breaks-playback-causes-ie-10-to-become-unresponsive">
+                Seeking to end of HTML 5 video under Win 7 breaks playback/causes IE 10 to become unresponsive
+            </a>
+        </li>
+        <li>
+            <a href="https://connect.microsoft.com/IE/feedback/details/853493/html5-video-tag-error-by-seeking">
+                HTML5 video Tag. Error by seeking
+            </a>
+        </li>
+    </ul>
+
+    <video preload="auto" id="video">
+        <source src="timecode.mp4" type="video/mp4">
+    </video>
+
+    <pre id="log"></pre>
+
+    <button onclick="destroy_ie()">GO</button>
+
+    <script>
+        function log(msg) {
+            document.getElementById("log").innerHTML += msg + "\n";
+        }
+
+
+        function destroy_ie() {
+            var video = document.getElementById('video');
+
+            log("seek to 11.0 and play video");
+            video.currentTime = 90.0;
+            video.play();
+
+            var video_ended = function (e) {
+                video.removeEventListener('ended', video_ended);
+
+                var end = video.currentTime;
+                log("done playing video, reading currentTime == " + video.currentTime);
+
+                setTimeout(function () {
+                    log("seek to currentTime = 0");
+                    video.currentTime = 0;
+
+                    setTimeout(function () {
+                        log("seek to currentTime = " + end + " (this confuses IE)");
+                        video.currentTime = end;
+
+                        setTimeout(function () {
+                            log("seek to beginning");
+                            video.currentTime = 0;
+
+                            setTimeout(function () {
+                                log("play()");
+                                video.play();
+                            }, 1000);
+                        }, 1000);
+                    }, 1000);
+                }, 1000);
+
+            };
+
+
+            video.addEventListener('ended', video_ended, false);
+
+        }
+
+    </script>
+</body>
+</html>
