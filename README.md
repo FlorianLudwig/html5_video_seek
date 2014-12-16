@@ -1,4 +1,4 @@
 html5_video_seek
 ================
 
-Seeking in HTML5 video on Internet Explorer fails when seeking near the end of the video
+To reproduce IE video seek error see http://florianludwig.github.io/html5_video_seek/
